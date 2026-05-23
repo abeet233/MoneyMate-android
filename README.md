@@ -49,6 +49,6 @@
 
 ## 截图
 
-<img width="108" height="215" alt="d84194cc0a4b8b5ded81dbacbedb3ff8" src="https://github.com/user-attachments/assets/2e317e23-b6fe-4799-a486-6a93c559e9b6" />
-<img width="108" height="215" alt="18ec7c2def4c94cabde396684d4f5eb5" src="https://github.com/user-attachments/assets/28cb25c6-445c-4951-b584-5f490f335394" />
+<img width="108" height="1000" alt="d84194cc0a4b8b5ded81dbacbedb3ff8" src="https://github.com/user-attachments/assets/2e317e23-b6fe-4799-a486-6a93c559e9b6" />
+<img width="108" height="1000" alt="18ec7c2def4c94cabde396684d4f5eb5" src="https://github.com/user-attachments/assets/28cb25c6-445c-4951-b584-5f490f335394" />
 
