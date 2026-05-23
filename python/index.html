@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>MoneyMate</title>
+  <style>
+    :root {
+      --bg: #f5f6fa;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --sub: #6b7280;
+      --primary: #4f46e5;
+      --primary-light: #818cf8;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --border: #e5e7eb;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .04);
+      --shadow-lg: 0 4px 24px rgba(0, 0, 0, .08);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      width: 100%;
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+      touch-action: pan-y;
+    }
+
+    .app {
+      width: 100%;
+      max-width: none;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--bg);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, .82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.3px;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 10px 16px;
+      background: var(--bg);
+      position: sticky;
+      top: 57px;
+      z-index: 99;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab {
+      flex: 1 0 auto;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      background: transparent;
+      color: var(--sub);
+      border: none;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .tab.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin: 0 16px 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .filter-bar {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 12px 16px;
+    }
+
+    .filter-bar .filter-select:last-child {
+      grid-column: span 2;
+    }
+
+    .filter-select {
+      width: 100%;
+      min-width: 0;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      font-size: 13px;
+      line-height: 1.2;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .card-header h3 {
+      font-size: 13px;
+      color: var(--sub);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .card-header .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 28px 20px 20px;
+    }
+
+    .hero .label {
+      font-size: 12px;
+      color: var(--sub);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .hero .value {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin: 4px 0;
+    }
+
+    .hero .subtitle {
+      font-size: 13px;
+      color: var(--sub);
+    }
+
+    .hero .edit-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 13px;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+
+    .asset-row,
+    .bucket-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      padding: 0 16px 12px;
+    }
+
+    .bucket-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px 12px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform .15s;
+      font-size: 11px;
+    }
+
+    .bucket-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .bucket-card .b-icon {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .bucket-card .b-name {
+      color: var(--sub);
+      margin-bottom: 4px;
+    }
+
+    .bucket-card .b-amount {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .bucket-card .b-pct {
+      font-size: 11px;
+      color: var(--sub);
+      margin-top: 3px;
+    }
+
+    .bucket-card .b-meta {
+      font-size: 10px;
+      color: var(--sub);
+      margin-top: 2px;
+    }
+
+    .bucket-card.formula .b-amount {
+      color: var(--primary);
+    }
+
+    .asset-card {
+      display: none;
+    }
+
+    .txn-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .txn-item.pending {
+      background: rgba(245, 158, 11, 0.04);
+      border-left: 3px solid #f59e0b;
+      padding-left: 10px;
+    }
+
+    .txn-item:last-child {
+      border-bottom: none;
+    }
+
+    .txn-item .icon-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .txn-item .icon-circle.expense {
+      background: #fef2f2;
+    }
+
+    .txn-item .icon-circle.income {
+      background: #ecfdf5;
+    }
+
+    .txn-item .info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .txn-item .info .name {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .txn-item .info .meta {
+      font-size: 12px;
+      color: var(--sub);
+    }
+
+    .txn-item .amount {
+      font-size: 15px;
+      font-weight: 600;
+      white-space: nowrap;
+      color: var(--text);
+    }
+
+    .txn-item .amount.expense {
+      color: #059669;
+    }
+
+    .txn-item .amount.income {
+      color: #dc2626;
+    }
+
+    .txn-item .pending-badge {
+      font-size: 10px;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 1px 6px;
+      border-radius: 8px;
+      margin-left: 4px;
+    }
+
+    .page {
+      padding-bottom: 40px;
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .section-header {
+      padding: 16px 16px 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--sub);
+      letter-spacing: .5px;
+    }
+
+    .date-group {
+      padding: 0 16px;
+    }
+
+    .date-label {
+      font-size: 12px;
+      color: var(--sub);
+      padding: 12px 0 4px;
+      font-weight: 500;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #4338ca;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 12px;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .import-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      margin: 0 16px 12px;
+      transition: border-color .2s;
+      background: var(--card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .import-zone:hover,
+    .import-zone.dragover {
+      border-color: var(--primary);
+    }
+
+    .import-zone .icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .import-zone .text {
+      font-size: 14px;
+      color: var(--sub);
+    }
+
+    .import-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .import-result {
+      margin: 0 16px 12px;
+    }
+
+    .import-result .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 16px 12px;
+    }
+
+    .report-stat {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .report-stat .num {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .report-stat .lbl {
+      font-size: 11px;
+      color: var(--sub);
+      margin-top: 2px;
+    }
+
+    .report-stat.danger .num {
+      color: var(--danger);
+    }
+
+    .report-stat.success .num {
+      color: var(--success);
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .setting-row .btn,
+    .setting-row .toggle {
+      flex-shrink: 0;
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-row .label {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .setting-row .sub {
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+
+    .bucket-setting-row {
+      display: block;
+      padding: 14px 0;
+    }
+
+    .bucket-setting-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .bucket-setting-title {
+      min-width: 0;
+    }
+
+    .bucket-setting-amount {
+      color: var(--primary);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .bucket-setting-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .bucket-section-label {
+      padding: 14px 0 8px;
+      font-size: 12px;
+      color: var(--sub);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .add-bucket-btn {
+      margin: 12px 16px;
+      width: calc(100% - 32px);
+      border-style: dashed;
+      background: #fff;
+      color: var(--primary);
+    }
+
+    .toggle {
+      position: relative;
+      width: 48px;
+      height: 28px;
+      display: inline-block;
+    }
+
+    .toggle input {
+      display: none;
+    }
+
+    .toggle .slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 28px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .toggle .slider::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .2s;
+    }
+
+    .toggle input:checked+.slider {
+      background: var(--primary);
+    }
+
+    .toggle input:checked+.slider::after {
+      transform: translateX(20px);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .4);
+      z-index: 200;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal {
+      background: var(--card);
+      border-radius: var(--radius) var(--radius) 0 0;
+      width: 100%;
+      max-width: none;
+      padding: 24px 20px 32px;
+      animation: slideUp .25s ease;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .modal h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .modal .actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 20px;
+      position: sticky;
+      bottom: 0;
+      background: var(--card);
+      padding-top: 10px;
+    }
+
+    .chart-wrap {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--sub);
+      font-size: 14px;
+    }
+
+    .back-to-top {
+      position: fixed;
+      bottom: 22px;
+      right: 24px;
+      z-index: 320;
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(79, 70, 229, .3);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .bulk-confirm-fab {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%) translateY(10px);
+      z-index: 310;
+      border: 1px solid #facc15;
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 22px;
+      box-shadow: 0 8px 22px rgba(146, 64, 14, .18);
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .25s;
+      white-space: nowrap;
+    }
+
+    .bulk-confirm-fab.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .bucket-modal-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .preset-btn {
+      text-align: left;
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      background: rgba(17, 24, 39, .92);
+      color: #fff;
+      padding: 9px 14px;
+      border-radius: 18px;
+      font-size: 13px;
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    @media (min-width: 720px) {
+
+      .app,
+      .modal {
+        max-width: 520px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .filter-bar {
+        grid-template-columns: 1fr;
+      }
+
+      .modal .actions,
+      .bucket-setting-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .setting-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .setting-row .btn,
+      .setting-row .toggle {
+        width: 100%;
+        align-self: stretch;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app" id="app">
+    <nav class="nav">
+      <h1>MoneyMate</h1>
+      <div class="nav-actions">
+        <span style="font-size:12px;color:var(--sub);" id="pending-badge-nav"></span>
+      </div>
+    </nav>
+
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-page="dashboard">总览</button>
+      <button class="tab" data-page="transactions">明细</button>
+      <button class="tab" data-page="import">导入</button>
+      <button class="tab" data-page="report">月报</button>
+      <button class="tab" data-page="settings">设置</button>
+    </div>
+
+    <div class="page active" id="page-dashboard">
+      <div class="hero">
+        <div class="label">净资产</div>
+        <div class="value" id="hero-networth">¥0</div>
+        <div class="subtitle">总资产 ¥<span id="hero-asset">0</span> − 负债 ¥<span id="hero-liability">0</span></div>
+      </div>
+      <div class="bucket-grid" id="bucket-grid"></div>
+      <div class="card">
+        <div class="card-header">
+          <h3>本月概览</h3>
+          <span class="badge" id="pending-count" style="cursor:pointer" onclick="switchTab('transactions')"></span>
+        </div>
+        <div style="display:flex;justify-content:space-around;padding:8px 0;">
+          <div style="text-align:center">
+            <div style="font-size:20px;font-weight:700;color:#059669" id="hero-expense">¥0</div>
+            <div style="font-size:11px;color:var(--sub)">支出</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:20px;font-weight:700;color:#dc2626" id="hero-income">¥0</div>
+            <div style="font-size:11px;color:var(--sub)">收入</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:20px;font-weight:700" id="hero-net">¥0</div>
+            <div style="font-size:11px;color:var(--sub)">净收支</div>
+          </div>
+        </div>
+        <div
+          style="display:flex;justify-content:space-around;padding:6px 0;border-top:1px dashed var(--border-light);margin-top:6px;">
+          <div style="text-align:center">
+            <div style="font-size:14px;font-weight:600;color:var(--sub)" id="hero-core-expense">¥0</div>
+            <div style="font-size:10px;color:var(--text-muted)">扣非支出</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:14px;font-weight:600;color:var(--sub)" id="hero-core-income">¥0</div>
+            <div style="font-size:10px;color:var(--text-muted)">扣非收入</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:14px;font-weight:600;color:var(--sub)" id="hero-core-net">¥0</div>
+            <div style="font-size:10px;color:var(--text-muted)">扣非净收支</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-header">近期流水预览</div>
+      <div class="card" id="recent-transactions" style="padding:0 20px;"></div>
+    </div>
+
+    <div class="page" id="page-transactions">
+      <div class="filter-bar">
+        <select id="filter-direction" class="filter-select" onchange="loadTransactions()">
+          <option value="">全部</option>
+          <option value="expense">支出</option>
+          <option value="income">收入</option>
+          <option value="neutral">不计收支</option>
+        </select>
+        <select id="filter-channel" class="filter-select" onchange="loadTransactions()">
+          <option value="">全部渠道</option>
+          <option value="wechat">微信</option>
+          <option value="alipay">支付宝</option>
+        </select>
+        <select id="filter-flow" class="filter-select" onchange="loadTransactions()">
+          <option value="">全部分类</option>
+          <option value="food">🍜 餐饮</option>
+          <option value="transport">🚗 交通</option>
+          <option value="shopping">🛍️ 购物</option>
+          <option value="entertainment">🎮 娱乐</option>
+          <option value="utilities">📱 充值</option>
+          <option value="income">💰 收入</option>
+          <option value="refund">↩️ 退款</option>
+          <option value="credit">💳 信用还款</option>
+        </select>
+        <select id="filter-month" class="filter-select" onchange="loadTransactions()">
+        </select>
+      </div>
+      <div id="transaction-list"></div>
+      <div id="txn-load-more" style="text-align:center;padding:16px;display:none;">
+        <button class="btn btn-outline btn-sm" onclick="loadMore()">加载更多</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-import">
+      <div class="section-header">上传账单文件</div>
+      <div class="import-zone" id="import-zone">
+        <div class="icon">📂</div>
+        <div class="text">点击选择微信xlsx或支付宝csv<br><span style="font-size:12px;">系统自动识别渠道和格式（如无法选中CSV，请改后缀为 .txt 再试）</span>
+        </div>
+        <input type="file" id="file-input"
+          accept=".xlsx,.xls,.csv,.txt,text/csv,text/plain,text/comma-separated-values,application/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          onchange="doImport(event)">
+      </div>
+      <div class="import-result hidden" id="import-result">
+        <div class="card">
+          <div id="import-result-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-report">
+      <div class="filter-bar">
+        <select id="report-month" class="filter-select" onchange="loadReport()">
+        </select>
+      </div>
+      <div class="report-grid">
+        <div class="report-stat">
+          <div class="num" style="color:#059669" id="rpt-expense">¥0</div>
+          <div class="lbl">总支出</div>
+        </div>
+        <div class="report-stat">
+          <div class="num" style="color:#dc2626" id="rpt-income">¥0</div>
+          <div class="lbl">总收入</div>
+        </div>
+        <div class="report-stat">
+          <div class="num" id="rpt-living">¥0</div>
+          <div class="lbl">生活净收支</div>
+        </div>
+        <div class="report-stat">
+          <div class="num" id="rpt-invest">-</div>
+          <div class="lbl">投资变动</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>净利润</h3>
+        </div>
+        <div style="font-size:32px;font-weight:800;text-align:center;padding:12px 0;"><span id="rpt-profit">¥0</span>
+        </div>
+        <div style="font-size:12px;color:var(--sub);text-align:center;">= 生活净收支 + 投资损益</div>
+      </div>
+      <div class="section-header">投资记录</div>
+      <div class="card" style="padding:0 20px;" id="investment-records-list">
+        <div class="setting-row">
+          <div>
+            <div class="label">新增记录</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="showInvestForm()">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-settings">
+      <div class="section-header">功能</div>
+      <div class="card">
+        <div class="setting-row">
+          <div>
+            <div class="label">通知记账</div>
+            <div class="sub">Android端自动采集微信/支付宝支付通知</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="notif-toggle" onchange="toggleNotif()" checked><span
+              class="slider"></span></label>
+        </div>
+      </div>
+      <div class="section-header">资产桶管理</div>
+      <div class="card" id="bucket-list" style="padding:0 20px;"></div>
+      <button class="btn btn-outline add-bucket-btn" onclick="showAddBucket()">+
+        新增科目</button>
+      <div class="section-header">通知数据</div>
+      <div class="card">
+        <div class="setting-row">
+          <div>
+            <div class="label">清除当月通知</div>
+            <div class="sub">删除本月所有通知来源的流水（账单导入不受影响）</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearNotifications('month')">清除</button>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="label">清除全部通知</div>
+            <div class="sub">删除所有通知来源的流水（账单导入不受影响）</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearNotifications('all')">清除</button>
+        </div>
+      </div>
+      <div class="section-header">数据</div>
+      <div class="card">
+        <div class="setting-row">
+          <div>
+            <div class="label">导出CSV</div>
+            <div class="sub">下载全部流水记录</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="exportCsv()">导出</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="modal-txn">
+      <div class="modal">
+        <h3>编辑交易</h3>
+        <div class="form-group"><label>分类</label><select id="edit-flow-type">
+            <option value="food">🍜 餐饮</option>
+            <option value="transport">🚗 交通</option>
+            <option value="shopping">🛍️ 购物</option>
+            <option value="clothing">👗 服饰</option>
+            <option value="home">🏠 家居</option>
+            <option value="entertainment">🎮 娱乐</option>
+            <option value="service">💼 服务</option>
+            <option value="utilities">📱 充值</option>
+            <option value="donation">❤️ 捐赠</option>
+            <option value="salary">💵 工资</option>
+            <option value="income">💰 收入</option>
+            <option value="refund">↩️ 退款</option>
+            <option value="investment">📈 投资理财</option>
+            <option value="credit">💳 信用还款</option>
+            <option value="transfer">↔️ 转账</option>
+            <option value="extraordinary_expense">⚠️ 非经常支出</option>
+            <option value="extraordinary_income">✨ 非经常收入</option>
+            <option value="consumption">🛒 消费</option>
+            <option value="unknown">📌 未知</option>
+          </select></div>
+        <div class="form-group"><label>备注</label><input id="edit-notes" placeholder="备注"></div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="saveTxn()">保存</button>
+          <button class="btn btn-outline hidden" id="confirm-txn-btn" onclick="confirmTxn()">手动确认</button>
+          <button class="btn btn-outline" onclick="closeModal('modal-txn')">取消</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteTxn()">删除</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="modal-bucket">
+      <div class="modal">
+        <h3 id="bucket-modal-title">编辑</h3>
+        <div class="form-group"><label>金额</label><input type="number" step="0.01" id="edit-bucket-value"
+            onfocus="if(this.value=='0')this.value=''"></div>
+        <div class="form-group"><label>显示名称</label><input id="edit-bucket-label" placeholder="如：总资产"></div>
+        <div class="form-group"><label>来源</label><select id="edit-bucket-source" onchange="toggleBucketFormula()">
+            <option value="manual">手动输入</option>
+            <option value="formula">公式计算</option>
+          </select></div>
+        <div class="form-group hidden" id="bucket-formula-group"><label>公式
+            (可用变量：总资产、投资市值、生活资金、总负债、净资产、短期借款、长期借款)</label><input id="edit-bucket-formula" placeholder="如：总资产 - 总负债">
+        </div>
+        <div class="form-group hidden" id="bucket-parent-group"><label>归属上级科目</label><select id="edit-bucket-parent">
+            <option value="">无</option>
+          </select></div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="saveBucket()">保存</button>
+          <button class="btn btn-outline" onclick="closeModal('modal-bucket')">取消</button>
+          <button class="btn btn-danger btn-sm hidden" id="bucket-delete-btn"
+            onclick="deleteBucket(state.editingBucketKey||'')">删除</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="modal-add-bucket">
+      <div class="modal"></div>
+    </div>
+
+    <div class="modal-overlay hidden" id="modal-snapshot">
+      <div class="modal">
+        <h3>新增投资记录</h3>
+        <div class="form-group"><label>日期</label><input type="date" id="snap-date"></div>
+        <div class="form-group"><label>类型</label><select id="snap-direction">
+            <option value="profit">盈利 +</option>
+            <option value="loss">亏损 −</option>
+          </select></div>
+        <div class="form-group"><label>金额</label><input type="number" step="0.01" id="snap-amount" placeholder="0.00">
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="saveInvestRecord()">保存</button>
+          <button class="btn btn-outline" onclick="closeModal('modal-snapshot')">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="app-toast"></div>
+
+  <button class="bulk-confirm-fab" id="bulk-confirm-btn" onclick="confirmAllPending()">一键确认待确认</button>
+  <button class="back-to-top" id="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    // Mobile detection via URL param (set by Android WebView)
+    var isMobile = window.location.search.indexOf('mobile=1') !== -1;
+    if (isMobile) {
+      var ms = document.createElement('style');
+      ms.textContent = `
+        html, body { width: 100vw; max-width: 100vw; overflow-x: hidden; }
+        .app { max-width: 100vw; }
+        .filter-bar { grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px 12px; }
+        .filter-select { padding: 8px 10px; font-size: 12px; }
+        .modal { border-radius: 20px 20px 0 0; padding: 20px 16px 28px; }
+        .modal h3 { font-size: 15px; margin-bottom: 12px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { font-size: 12px; margin-bottom: 4px; color: var(--text); }
+        .form-group input, .form-group select {
+          padding: 10px 12px; font-size: 14px; border-radius: 12px;
+          background: #fff; color: var(--text); border: 1.5px solid var(--border);
+        }
+        .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+        .actions { display: flex; flex-direction: column; gap: 8px; }
+        .actions .btn { width: 100%; }
+        .bucket-modal-card { padding: 10px; margin-bottom: 10px; }
+        .bucket-modal-card .form-group label { font-size: 12px; font-weight: 600; color: var(--text); }
+        .preset-btn { padding: 10px 12px; font-size: 13px; }
+        .preset-grid { gap: 6px; }
+        .setting-row { padding: 12px 0; }
+        .btn { padding: 12px 20px; font-size: 14px; }
+        .btn-sm { padding: 8px 14px; font-size: 12px; }
+        .bucket-setting-row { padding: 12px 0; }
+        .bucket-setting-head { grid-template-columns: 1fr; gap: 6px; }
+        .bucket-setting-amount { text-align: left; font-size: 15px; }
+        .bucket-setting-actions { grid-template-columns: 1fr 1fr; gap: 8px; }
+        .bucket-card { padding: 12px 8px; font-size: 10px; }
+        .bucket-card .b-amount { font-size: 14px; }
+        .nav { padding: 12px 16px; }
+        .nav h1 { font-size: 16px; }
+        .tabs { padding: 8px 10px; top: 48px; }
+        .tab { padding: 5px 12px; font-size: 12px; }
+        .card { padding: 16px; margin: 0 10px 10px; }
+        .hero { padding: 20px 16px 16px; }
+        .hero .value { font-size: 32px; }
+        .import-zone { padding: 24px 16px; margin: 0 10px 10px; }
+        .add-bucket-btn { margin: 10px 10px; width: calc(100% - 20px); }
+        .txn-item { padding: 10px 0; gap: 8px; }
+        .txn-item .info .name { font-size: 13px; }
+        .txn-item .amount { font-size: 14px; }
+        .report-grid { grid-template-columns: 1fr 1fr; padding: 0 10px 10px; }
+        .report-stat { padding: 12px; }
+        .report-stat .num { font-size: 18px; }
+        .section-header { padding: 14px 10px 6px; font-size: 12px; }
+        #bucket-grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 8px 8px; }
+        .asset-row { grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 8px 8px; }
+        .toggle { width: 48px; height: 28px; flex-shrink: 0; }
+        .toggle .slider { border-radius: 28px; }
+        .toggle .slider::after { width: 22px; height: 22px; top: 3px; left: 3px; }
+        .toggle input:checked+.slider::after { transform: none; left: auto; right: 3px; }
+      `;
+      document.head.appendChild(ms);
+    }
+
+    document.addEventListener('touchmove', function (event) {
+      if (event.touches && event.touches.length > 1) { event.preventDefault(); }
+    }, { passive: false });
+    document.addEventListener('gesturestart', function (event) { event.preventDefault(); });
+    document.addEventListener('gesturechange', function (event) { event.preventDefault(); });
+
+    if (window.NativeBridge) {
+      window._origFetch = window.fetch;
+      window.fetch = function (url, opts) {
+        const method = (opts && opts.method) || 'GET';
+        const body = (opts && opts.body) || '';
+        const result = JSON.parse(window.NativeBridge.call(method, url, body));
+        if (result.detail && !result.ok) {
+          return Promise.resolve({ ok: false, status: 400, json: () => Promise.resolve(result) });
+        }
+        return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(result) });
+      };
+    }
+    const API = '';
+
+    async function nativeImportBill(file) {
+      const content = await new Promise(resolve => { const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(file); });
+      const base64 = content.split(',')[1];
+      return JSON.parse(NativeBridge.call('POST', '/api/import/bill', JSON.stringify({ file: base64, filename: file.name })));
+    }
+
+    let state = { editingTxnId: null, editingBucketKey: null, txnPage: 0, allBuckets: [], pendingCount: 0 };
+
+    const KEY_LABELS = {
+      total_asset: '总资产', investment_value: '投资市值', life_value: '生活资金',
+      total_liability: '总负债', net_worth: '净资产', investment_change: '投资变动',
+      short_term_debt: '短期借款', long_term_debt: '长期借款'
+    };
+    const KEY_ICONS = {
+      total_asset: '🏦', investment_value: '📈', life_value: '🏠',
+      total_liability: '💳', net_worth: '💰', investment_change: '📊',
+      short_term_debt: '📋', long_term_debt: '🏗️'
+    };
+    const BUCKET_ORDER = ['total_asset', 'net_worth', 'investment_value', 'life_value', 'total_liability'];
+    const CORE_KEYS = ['total_asset', 'investment_value', 'life_value', 'total_liability', 'net_worth', 'investment_change'];
+    const FLOW_TYPES = {
+      food: '餐饮', transport: '交通', shopping: '购物', clothing: '服饰', home: '家居',
+      entertainment: '娱乐', service: '服务', utilities: '充值', donation: '捐赠',
+      investment: '投资理财', credit: '信用还款', refund: '退款', income: '收入',
+      salary: '工资', transfer: '转账', consumption: '消费',
+      extraordinary_expense: '非经常性损益(支出)', extraordinary_income: '非经常性损益(收入)',
+      unknown: '未知'
+    };
+    const FLOW_ICONS = {
+      food: '🍜', transport: '🚗', shopping: '🛍️', clothing: '👗', home: '🏠',
+      entertainment: '🎮', service: '💼', utilities: '📱', donation: '❤️',
+      investment: '📈', credit: '💳', refund: '↩️', income: '💰',
+      salary: '💵', transfer: '↔️', consumption: '🛒',
+      extraordinary_expense: '⚠️', extraordinary_income: '✨',
+      unknown: '📌'
+    };
+
+    function klabel(k, blabel) { return KEY_LABELS[k] || blabel || k; }
+    function kicon(k) { return KEY_ICONS[k] || '○'; }
+
+    function cardHtml(b, total) {
+      const v = b.value || 0;
+      const pct = total > 0 ? (v / total * 100).toFixed(1) + '%' : '0%';
+      const isFormula = b.source === 'formula';
+      const name = klabel(b.key, b.label);
+      return `<div class="bucket-card${isFormula ? ' formula' : ''}" onclick="editBucket('${b.key}')">
+    <div class="b-icon">${kicon(b.key)}</div>
+    <div class="b-name">${name}</div>
+    <div class="b-amount">¥${fmt(v)}</div>
+    ${pct ? `<div class="b-pct">${pct}</div>` : ''}
+    <div class="b-meta">${isFormula ? '自动计算' : '手动输入'}</div>
+  </div>`;
+    }
+    function formulaReadable(f) {
+      let s = f || '';
+      Object.entries(KEY_LABELS).forEach(([k, v]) => { s = s.split(k).join(v); });
+      return s;
+    }
+    function formulaToKeys(f) {
+      let s = f || '';
+      Object.entries(KEY_LABELS).forEach(([k, v]) => { s = s.split(v).join(k); });
+      return s;
+    }
+
+    async function api(url, opts = {}) {
+      if (window.NativeBridge) {
+        const method = (opts && opts.method) || 'GET';
+        const body = (opts && opts.body) || '';
+        return JSON.parse(NativeBridge.call(method, url, body));
+      }
+      const res = await fetch(API + url, { headers: { 'Content-Type': 'application/json' }, ...opts });
+      return res.json();
+    }
+
+    function setPendingUi(pendingCount) {
+      state.pendingCount = pendingCount;
+      const pendingCountEl = document.getElementById('pending-count');
+      const pendingBadgeEl = document.getElementById('pending-badge-nav');
+      if (pendingCountEl) pendingCountEl.textContent = '待确认 ' + pendingCount + ' 条';
+      if (pendingBadgeEl) pendingBadgeEl.textContent = pendingCount > 0 ? ('⚠' + pendingCount) : '';
+      const bulkBtn = document.getElementById('bulk-confirm-btn');
+      if (bulkBtn) {
+        bulkBtn.textContent = '一键确认（' + pendingCount + '）';
+      }
+      updateFloatingButtons();
+    }
+
+    async function loadDashboard() {
+      const [buckets, report, txns, pending] = await Promise.all([
+        api('/api/buckets'), api(`/api/report/monthly?year=${new Date().getFullYear()}&month=${new Date().getMonth() + 1}`),
+        api('/api/transactions?limit=5'), api('/api/reconciliation/pending')
+      ]);
+
+      state.allBuckets = buckets;
+      let b = {}; buckets.forEach(x => b[x.key] = x.value);
+      const total = b.total_asset || 0;
+      const networth = b.net_worth || 0;
+      const liability = b.total_liability || 0;
+
+      document.getElementById('hero-networth').textContent = '¥' + fmt(networth);
+      document.getElementById('hero-asset').textContent = fmt(total);
+      document.getElementById('hero-liability').textContent = fmt(liability);
+
+      renderBucketGrid(buckets, total);
+
+      if (report) {
+        document.getElementById('hero-expense').textContent = '−¥' + fmt(report.total_expense);
+        document.getElementById('hero-income').textContent = '+¥' + fmt(report.total_income);
+        const net = report.total_income - report.total_expense;
+        document.getElementById('hero-net').textContent = (net >= 0 ? '+' : '−') + '¥' + fmt(Math.abs(net));
+        if (report.core_expense !== undefined) {
+          document.getElementById('hero-core-expense').textContent = '−¥' + fmt(report.core_expense);
+          document.getElementById('hero-core-income').textContent = '+¥' + fmt(report.core_income);
+          document.getElementById('hero-core-net').textContent = (report.core_net >= 0 ? '+' : '−') + '¥' + fmt(Math.abs(report.core_net));
+        }
+      }
+
+      const pendingCount = pending && typeof pending.pending === 'number' ? pending.pending : 0;
+      setPendingUi(pendingCount);
+
+      renderRecentTxns(txns.items || []);
+    }
+
+    async function refreshPendingSummary() {
+      const pending = await api('/api/reconciliation/pending');
+      const pendingCount = pending && typeof pending.pending === 'number' ? pending.pending : 0;
+      setPendingUi(pendingCount);
+    }
+
+    function renderBucketGrid(buckets, total) {
+      const el = document.getElementById('bucket-grid');
+      const bmap = {}; buckets.forEach(b => { bmap[b.key] = b; });
+
+      // ordered core cards
+      let html = '';
+      BUCKET_ORDER.forEach(key => {
+        const b = bmap[key];
+        if (!b) return;
+        html += cardHtml(b, total);
+      });
+
+      // show children sections
+      [{ parent: 'total_liability', title: '负债明细' }, { parent: 'expense', title: '支出明细' }, { parent: 'income', title: '收入明细' }].forEach(g => {
+        const children = buckets.filter(b => b.parent === g.parent);
+        if (children.length > 0) {
+          html += '<div style="grid-column:1/-1;font-size:11px;color:var(--sub);padding:8px 0 0 4px;">' + g.title + '</div>';
+          children.forEach(b => { html += cardHtml(b, total); });
+        }
+      });
+
+      // also show any other non-core, non-child buckets
+      const shown = new Set(BUCKET_ORDER);
+      [{ parent: 'total_liability' }, { parent: 'expense' }, { parent: 'income' }].forEach(g => {
+        buckets.filter(b => b.parent === g.parent).forEach(b => shown.add(b.key));
+      });
+      buckets.forEach(b => {
+        if (!shown.has(b.key) && !CORE_KEYS.includes(b.key)) {
+          html += cardHtml(b, total);
+        }
+      });
+
+      el.innerHTML = html;
+    }
+
+    function renderRecentTxns(items) {
+      const el = document.getElementById('recent-transactions');
+      if (!items.length) { el.innerHTML = '<div class="empty">暂无流水</div>'; return; }
+      el.innerHTML = items.map(t => txnRow(t)).join('');
+    }
+
+    function txnRow(t) {
+      const isPending = !!(t.pending || t.review_status === 'pending');
+      const pendingMark = isPending ? '<span class="pending-badge">待确认</span>' : '';
+      const ft = t.flow_type || 'unknown';
+      const icon = FLOW_ICONS[ft] || FLOW_ICONS.unknown;
+      const cls = t.direction === 'expense' ? 'expense' : t.direction === 'income' ? 'income' : '';
+      const sign = t.direction === 'expense' ? '−' : t.direction === 'income' ? '+' : '±';
+      const circleCls = t.direction === 'expense' ? 'expense' : t.direction === 'income' ? 'income' : '';
+      const catName = FLOW_TYPES[ft] || '';
+      return `<div class="txn-item${isPending ? ' pending' : ''}" data-id="${t.id}" onclick="editTxn('${t.id}')">
+    <div class="icon-circle ${circleCls}">${icon}</div>
+    <div class="info"><div class="name">${esc(t.counterparty || t.item_desc || '未知')}${pendingMark}</div><div class="meta">${esc(t.channel)} · ${catName}${isPending ? ' · 待确认' : ''} · ${fmtDate(t.occurred_at)}</div></div>
+    <div class="amount ${cls}">${sign}¥${fmt(t.amount || 0)}</div>
+  </div>`;
+    }
+
+    let txnOffset = 0;
+    async function loadTransactions(reset = true) {
+      if (reset) { txnOffset = 0; document.getElementById('transaction-list').innerHTML = ''; }
+      const dir = document.getElementById('filter-direction').value;
+      const ch = document.getElementById('filter-channel').value;
+      const ft = document.getElementById('filter-flow').value;
+      const monthVal = document.getElementById('filter-month').value;
+      let params = `limit=50&offset=${txnOffset}`;
+      if (dir) params += `&direction=${dir}`;
+      if (ch) params += `&channel=${ch}`;
+      if (ft) params += `&flow_type=${ft}`;
+      if (monthVal) { const [y, m] = monthVal.split('-'); params += `&year=${y}&month=${m}`; }
+
+      const data = await api(`/api/transactions?${params}`);
+      const list = document.getElementById('transaction-list');
+      if (!data.items || !data.items.length) {
+        if (reset) list.innerHTML = '<div class="empty">暂无流水</div>';
+      } else {
+        let html = '';
+        let lastDate = '';
+        for (const t of data.items) {
+          const d = fmtDate(t.occurred_at);
+          if (d !== lastDate) { html += `<div class="date-label">${d}</div>`; lastDate = d; }
+          html += '<div class="date-group">' + txnRow(t) + '</div>';
+        }
+        if (reset) list.innerHTML = html;
+        else list.innerHTML += html;
+      }
+      txnOffset += 50;
+      document.getElementById('txn-load-more').style.display = (data.total > txnOffset) ? '' : 'none';
+      updateFloatingButtons();
+    }
+
+    async function loadMore() { await loadTransactions(false); }
+
+    function editTxn(id) {
+      state.editingTxnId = id;
+      api(`/api/transactions?limit=10000`).then(data => {
+        const t = (data.items || []).find(x => x.id === id);
+        if (!t) return;
+        state.editingTxnReviewStatus = t.review_status || '';
+        document.getElementById('edit-flow-type').value = t.flow_type || 'unknown';
+        document.getElementById('edit-notes').value = t.notes || '';
+        document.getElementById('confirm-txn-btn').classList.toggle('hidden', state.editingTxnReviewStatus !== 'pending');
+        document.getElementById('modal-txn').classList.remove('hidden');
+      });
+    }
+
+    async function saveTxn() {
+      var flowType = document.getElementById('edit-flow-type').value;
+      var notes = document.getElementById('edit-notes').value;
+      await api(`/api/transactions/${state.editingTxnId}`, {
+        method: 'PUT', body: JSON.stringify({
+          flow_type: flowType,
+          notes: notes
+        })
+      });
+      closeModal('modal-txn');
+      if (isMobile) {
+        // Update in-place to preserve scroll position
+        var row = document.querySelector('.txn-item[data-id="' + state.editingTxnId + '"]');
+        if (row) {
+          var icon = FLOW_ICONS[flowType] || FLOW_ICONS.unknown;
+          var catName = FLOW_TYPES[flowType] || '';
+          var iconC = row.querySelector('.icon-circle');
+          if (iconC) iconC.textContent = icon;
+          var meta = row.querySelector('.meta');
+          if (meta) {
+            var parts = meta.textContent.split(' · ');
+            if (parts.length >= 2) {
+              parts[1] = catName;
+              meta.textContent = parts.join(' · ');
+            }
+          }
+        }
+        await loadDashboard();
+        await loadReport();
+      } else {
+        var sp = window.scrollY;
+        await loadTransactions(true);
+        window.scrollTo(0, sp);
+        await loadDashboard();
+        await loadReport();
+      }
+    }
+
+    async function confirmTxn() {
+      await api(`/api/transactions/${state.editingTxnId}`, {
+        method: 'PUT', body: JSON.stringify({ review_status: 'confirmed' })
+      });
+      closeModal('modal-txn');
+      var sp = window.scrollY;
+      await loadTransactions(true);
+      window.scrollTo(0, sp);
+      await loadDashboard();
+      await loadReport();
+    }
+
+    async function confirmAllPending() {
+      if (!state.pendingCount) {
+        toast('当前没有待确认');
+        return;
+      }
+      if (!confirm('确认将全部待确认标记为已确认？')) return;
+      const data = await api('/api/transactions/confirm-pending', { method: 'POST' });
+      const confirmed = data && data.confirmed ? data.confirmed : 0;
+      const merged = data && data.merged ? data.merged : 0;
+      toast('已确认 ' + confirmed + ' 条' + (merged ? ('，合并 ' + merged + ' 条') : ''));
+      var sp = window.scrollY;
+      await loadTransactions(true);
+      window.scrollTo(0, sp);
+      await loadDashboard();
+      await refreshPendingSummary();
+    }
+
+    async function deleteTxn() {
+      if (!confirm('确定删除此条流水？')) return;
+      await api(`/api/transactions/${state.editingTxnId}`, { method: 'DELETE' });
+      closeModal('modal-txn');
+      const row = document.querySelector('.txn-item[data-id="' + state.editingTxnId + '"]');
+      if (row && row.parentNode) {
+        const group = row.parentNode;
+        row.parentNode.removeChild(row);
+        if (!group.querySelector('.txn-item')) {
+          const dateLabel = group.previousElementSibling;
+          if (dateLabel && dateLabel.classList && dateLabel.classList.contains('date-label')) {
+            dateLabel.parentNode.removeChild(dateLabel);
+          }
+          group.parentNode.removeChild(group);
+        }
+      } else {
+        var sp = window.scrollY;
+        await loadTransactions(true);
+        window.scrollTo(0, sp);
+      }
+      await loadDashboard();
+      await loadReport();
+      await refreshPendingSummary();
+      updateFloatingButtons();
+    }
+
+    async function doImport(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (window.NativeBridge) {
+        const data = await nativeImportBill(file);
+        showImportResult(data);
+        await loadDashboard(); await loadReport(); await loadTransactions(true);
+        e.target.value = '';
+        return;
+      }
+
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch(API + '/api/import/bill', { method: 'POST', body: form });
+      const data = await res.json();
+
+      const el = document.getElementById('import-result');
+      el.classList.remove('hidden');
+      if (data.error) {
+        document.getElementById('import-result-content').innerHTML =
+          `<div style="color:var(--danger);padding:12px 0;font-size:14px;">❌ ${esc(data.error)}</div>`;
+      } else {
+        document.getElementById('import-result-content').innerHTML = `
+      <div class="row"><span>匹配更新</span><strong>${data.matched} 条</strong></div>
+      <div class="row"><span>新增</span><strong>${data.new} 条</strong></div>
+      <div class="row"><span>跳过(已删除)</span><strong>${data.skipped} 条</strong></div>
+      ${data.conflicts ? `<div class="row"><span>待确认冲突</span><strong style="color:var(--warning)">${data.conflicts} 条</strong></div>` : ''}`;
+      }
+      await loadDashboard();
+      await loadReport();
+      await loadTransactions();
+      e.target.value = '';
+    }
+
+    function showImportResult(data) {
+      const el = document.getElementById('import-result');
+      el.classList.remove('hidden');
+      if (data.error || data.detail) {
+        document.getElementById('import-result-content').innerHTML =
+          '<div style="color:var(--danger);padding:12px 0;font-size:14px;">❌ ' + esc(data.error || data.detail) + '</div>';
+        return;
+      }
+      document.getElementById('import-result-content').innerHTML =
+        '<div class="row"><span>匹配更新</span><strong>' + (data.matched || 0) + ' 条</strong></div>' +
+        '<div class="row"><span>新增</span><strong>' + (data.new || 0) + ' 条</strong></div>' +
+        '<div class="row"><span>跳过</span><strong>' + (data.skipped || 0) + ' 条</strong></div>' +
+        (data.conflicts ? '<div class="row"><span>待确认</span><strong style="color:var(--warning)">' + data.conflicts + ' 条</strong></div>' : '');
+    }
+
+    const iz = document.getElementById('import-zone');
+    iz.addEventListener('dragover', e => { e.preventDefault(); iz.classList.add('dragover'); });
+    iz.addEventListener('dragleave', () => iz.classList.remove('dragover'));
+    iz.addEventListener('drop', e => {
+      e.preventDefault(); iz.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) { document.getElementById('file-input').files = e.dataTransfer.files; doImport({ target: { files: [file] } }); }
+    });
+
+    async function loadReport() {
+      const mv = document.getElementById('report-month').value;
+      if (!mv) return;
+      const [y, m] = mv.split('-');
+      const data = await api(`/api/report/monthly?year=${y}&month=${m}`);
+      if (!data || data.error) return;
+      document.getElementById('rpt-expense').textContent = '−¥' + fmt(data.total_expense);
+      document.getElementById('rpt-income').textContent = '+¥' + fmt(data.total_income);
+      const ln = data.living_net || 0;
+      document.getElementById('rpt-living').textContent = (ln >= 0 ? '+' : '−') + '¥' + fmt(Math.abs(ln));
+      document.getElementById('rpt-invest').textContent = data.investment_change != null
+        ? (data.investment_change >= 0 ? '+' : '−') + '¥' + fmt(Math.abs(data.investment_change)) : '-';
+      const profit = data.net_profit || 0;
+      document.getElementById('rpt-profit').textContent = (profit >= 0 ? '+' : '−') + '¥' + fmt(Math.abs(profit));
+    }
+
+    async function loadSettings() {
+      const [buckets, settings] = await Promise.all([api('/api/buckets'), api('/api/settings')]);
+      state.allBuckets = buckets;
+      document.getElementById('notif-toggle').checked = settings.notification_enabled === 'true';
+
+      const core = buckets.filter(b => CORE_KEYS.includes(b.key));
+      const custom = buckets.filter(b => !CORE_KEYS.includes(b.key));
+
+      let html = '';
+      core.forEach(b => {
+        html += bucketSettingRow(b);
+      });
+
+      if (custom.length > 0) {
+        html += '<div class="bucket-section-label">自定义科目</div>';
+        custom.forEach(b => {
+          html += bucketSettingRow(b);
+        });
+      }
+
+      document.getElementById('bucket-list').innerHTML = html;
+    }
+
+    function bucketSettingRow(b) {
+      const isCore = CORE_KEYS.includes(b.key);
+      const ft = b.source === 'formula' ? '公式计算' : '手动输入';
+      const fd = b.source === 'formula' && b.formula ? ' · ' + formulaReadable(b.formula) : '';
+      const parentInfo = (b.parent && b.parent !== 'null') ? '归属于：' + klabel(b.parent) : '无上级科目';
+      const delBtn = isCore ? '' : `<button class="btn btn-outline btn-sm" onclick="deleteBucket('${b.key}')" style="color:var(--danger);border-color:rgba(239,68,68,.45);">删除</button>`;
+      const isM = !!isMobile;
+      const headStyle = isM ? 'style="grid-template-columns:1fr;gap:8px;justify-items:center;text-align:center;"' : '';
+      const titleStyle = isM ? 'style="text-align:center;align-items:center;"' : '';
+      const amountStyle = isM ? 'style="text-align:center;width:100%;"' : '';
+      const actionsStyle = isM ? 'style="grid-template-columns:1fr;gap:8px;justify-items:center;"' : '';
+      return `<div class="setting-row bucket-setting-row">
+    <div class="bucket-setting-head" ${headStyle}>
+      <div class="bucket-setting-title" ${titleStyle}>
+        <div class="label">${kicon(b.key)} ${klabel(b.key, b.label)}</div>
+        <div class="sub">${parentInfo}</div>
+        <div class="sub">${ft}${fd}</div>
+      </div>
+      <div class="bucket-setting-amount" ${amountStyle}>¥${fmt(b.value)}</div>
+    </div>
+    <div class="bucket-setting-actions" ${actionsStyle}>
+      <button class="btn btn-outline btn-sm" onclick="editBucket('${b.key}')">编辑</button>
+      ${delBtn || '<span></span>'}
+    </div>
+  </div>`;
+    }
+
+    async function toggleNotif() {
+      const v = document.getElementById('notif-toggle').checked;
+      await api('/api/settings/notification_enabled', { method: 'PUT', body: JSON.stringify({ value: v ? 'true' : 'false' }) });
+    }
+
+    function editBucket(key) {
+      state.editingBucketKey = key;
+      const b = state.allBuckets.find(x => x.key === key);
+      if (!b) return;
+      document.getElementById('bucket-modal-title').textContent = '编辑 - ' + klabel(key);
+      document.getElementById('edit-bucket-label').value = klabel(key);
+      document.getElementById('edit-bucket-value').value = b.value;
+      document.getElementById('edit-bucket-source').value = b.source;
+      document.getElementById('edit-bucket-formula').value = b.formula || '';
+
+      // populate parent dropdown
+      const parentSel = document.getElementById('edit-bucket-parent');
+      parentSel.innerHTML = '<option value="">无</option>';
+      PARENT_OPTIONS.forEach(o => {
+        if (o.key !== key) parentSel.innerHTML += `<option value="${o.key}">${o.label}</option>`;
+      });
+      parentSel.value = b.parent || '';
+
+      const isCore = CORE_KEYS.includes(key);
+      document.getElementById('bucket-parent-group').classList.toggle('hidden', isCore);
+      toggleBucketFormula();
+      document.getElementById('modal-bucket').classList.remove('hidden');
+      document.getElementById('bucket-delete-btn').classList.toggle('hidden', isCore);
+    }
+
+    function toggleBucketFormula() {
+      const isFormula = document.getElementById('edit-bucket-source').value === 'formula';
+      document.getElementById('bucket-formula-group').classList.toggle('hidden', !isFormula);
+    }
+
+    async function saveBucket() {
+      const key = state.editingBucketKey;
+      const label = document.getElementById('edit-bucket-label')?.value?.trim();
+      if (label) KEY_LABELS[key] = label;
+      const res = await fetch(API + '/api/buckets/' + key, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          label: label || klabel(key),
+          value: parseFloat(document.getElementById('edit-bucket-value').value) || 0,
+          source: document.getElementById('edit-bucket-source').value,
+          formula: formulaToKeys(document.getElementById('edit-bucket-formula').value) || null,
+          parent: document.getElementById('edit-bucket-parent').value || null
+        })
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        alert((data && data.detail) || '保存失败');
+        return;
+      }
+      closeModal('modal-bucket');
+      loadSettings();
+      loadDashboard();
+    }
+
+    async function deleteBucket(key) {
+      if (!confirm('确定删除「' + klabel(key) + '」？')) return;
+      const res = await fetch(API + '/api/buckets/' + key, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } });
+      if (!res.ok) {
+        const data = await res.json();
+        alert((data && data.detail) || '删除失败');
+        return;
+      }
+      closeModal('modal-bucket');
+      loadSettings();
+      loadDashboard();
+    }
+
+    const PARENT_OPTIONS = [
+      { key: 'total_asset', label: '总资产' },
+      { key: 'net_worth', label: '净资产' },
+      { key: 'investment_value', label: '投资市值' },
+      { key: 'life_value', label: '生活资金' },
+      { key: 'total_liability', label: '总负债' },
+      { key: 'income', label: '收入' },
+      { key: 'expense', label: '支出' },
+    ];
+    const PARENT_PRESETS = {
+      total_liability: [
+        { key: 'short_term_debt', label: '短期借款（花呗/信用卡等）' },
+        { key: 'long_term_debt', label: '长期借款（贷款等）' },
+      ],
+      income: [
+        { key: 'salary_income', label: '工资收入' },
+        { key: 'extraordinary_income', label: '非经常性损益（收入）' },
+      ],
+      expense: [
+        { key: 'food_expense', label: '餐饮支出' },
+        { key: 'transport_expense', label: '交通支出' },
+        { key: 'shopping_expense', label: '购物支出' },
+        { key: 'extraordinary_expense', label: '非经常性损益（支出）' },
+      ],
+      investment_value: [
+        { key: 'stock_invest', label: '股票投资' },
+        { key: 'fund_invest', label: '基金投资' },
+      ]
+    };
+
+    function showAddBucket() {
+      var isM = !!isMobile;
+      var html;
+      if (isM) {
+        var block = 'display:block;width:100%;clear:both;text-align:center;margin:0 auto;';
+        var card = block + 'background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;box-sizing:border-box;';
+        var lbl = block + 'font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;';
+        var inp = block + 'padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;background:#fff;color:var(--text);box-sizing:border-box;margin-bottom:10px;text-align:center;';
+        var sel = block + 'padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;background:#fff;color:var(--text);box-sizing:border-box;appearance:none;background-image:url(\'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236b7280%22 stroke-width=%222%22%3E%3Cpath d=%22M6 9l6 6 6-6%22/%3E%3C/svg%3E\');background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;text-align:center;';
+        var btn = block + 'padding:13px;font-size:15px;border-radius:24px;border:none;cursor:pointer;font-weight:600;text-align:center;margin-bottom:10px;';
+
+        html = '<div style="' + block + '">';
+
+        // Section 1: Parent bucket
+        html += '<div style="' + card + '"><label style="' + lbl + '">📂 归属上级科目</label>';
+        html += '<select id="add-bucket-parent" style="' + sel + '" onchange="updateAddPresets()">';
+        PARENT_OPTIONS.forEach(function (o) { html += '<option value="' + o.key + '">' + o.label + '</option>'; });
+        html += '</select></div>';
+
+        // Section 2: Quick presets
+        html += '<div style="' + card + '"><label style="' + lbl + '">⚡ 快速添加预设</label>';
+        html += '<div id="add-presets-area" style="max-height:180px;overflow-y:auto;' + block + '"></div></div>';
+
+        // Section 3: Custom add
+        html += '<div style="' + card + '"><label style="' + lbl + '">✏️ 自定义科目</label>';
+        html += '<input id="custom-bucket-label" placeholder="科目名称，如：股票投资" style="' + inp + '">';
+        html += '<input type="number" step="0.01" id="custom-bucket-value" value="0" placeholder="初始金额" style="' + inp + '">';
+        html += '<button onclick="addCustomBucket()" style="' + btn + 'background:var(--primary);color:#fff;">添加科目</button>';
+        html += '</div>';
+
+        // Cancel
+        html += '<button onclick="closeModal(\'modal-add-bucket\')" style="' + btn + 'background:transparent;border:1.5px solid var(--border);color:var(--text);">取消</button>';
+        html += '</div>';
+      } else {
+        html = '<div class="bucket-modal-card"><div class="form-group"><label>归属上级科目</label><select id="add-bucket-parent" class="filter-select" onchange="updateAddPresets()">';
+        PARENT_OPTIONS.forEach(function (o) {
+          html += '<option value="' + o.key + '">' + o.label + '</option>';
+        });
+        html += '</select></div></div>';
+        html += '<div id="add-presets-area" class="bucket-modal-card"></div>';
+        html += '<div class="bucket-modal-card">';
+        html += '<div class="form-group"><label>名称</label>';
+        html += '<input id="custom-bucket-label" placeholder="输入自定义名称">';
+        html += '</div><div class="form-group"><label>金额</label>';
+        html += '<input type="number" step="0.01" id="custom-bucket-value" value="0">';
+        html += '</div></div><div class="actions">';
+        html += '<button class="btn btn-primary" onclick="addCustomBucket()">添加科目</button>';
+        html += '<button class="btn btn-outline" onclick="closeModal(\'modal-add-bucket\')">取消</button>';
+        html += '</div>';
+      }
+      document.getElementById('modal-add-bucket').innerHTML = '<h3>新增科目</h3>' + html;
+      updateAddPresets();
+      document.getElementById('modal-add-bucket').classList.remove('hidden');
+    }
+
+    function updateAddPresets() {
+      const parent = document.getElementById('add-bucket-parent').value;
+      const presets = PARENT_PRESETS[parent] || [];
+      const area = document.getElementById('add-presets-area');
+      if (presets.length === 0) {
+        area.innerHTML = '<div style="color:var(--sub);font-size:13px;padding:4px 0;">该科目暂无预设，请在下方自定义添加</div>';
+        return;
+      }
+      var isM = !!isMobile;
+      var h;
+      if (isM) {
+        h = '<div style="display:block;width:100%;">';
+        presets.forEach(function (p) {
+          var exists = state.allBuckets.some(function (b) { return b.key === p.key; });
+          h += '<button style="display:block;width:100%;text-align:center;padding:10px 12px;font-size:13px;border:1.5px solid var(--border);border-radius:12px;background:#fff;color:var(--text);cursor:pointer;margin-bottom:6px;' + (exists ? 'opacity:.4;' : '') + '" onclick="addPresetBucket(\'' + p.key + '\',\'' + p.label + '\',\'' + parent + '\')" ' + (exists ? 'disabled' : '') + '>+ ' + p.label + (exists ? '（已有）' : '') + '</button>';
+        });
+        h += '</div>';
+      } else {
+        h = '<div class="form-group" style="margin-bottom:0;"><label>快速添加</label><div class="preset-grid">';
+        presets.forEach(function (p) {
+          const exists = state.allBuckets.some(function (b) { return b.key === p.key; });
+          h += '<button class="btn btn-outline preset-btn" style="' + (exists ? 'opacity:.45;' : '') + '" onclick="addPresetBucket(\'' + p.key + '\',\'' + p.label + '\',\'' + parent + '\')" ' + (exists ? 'disabled' : '') + '>+ ' + p.label + (exists ? '（已有）' : '') + '</button>';
+        });
+      }
+      h += '</div>';
+      area.innerHTML = h;
+    }
+
+    function addPresetBucket(key, label, parent) {
+      KEY_LABELS[key] = label;
+      api('/api/buckets', { method: 'POST', body: JSON.stringify({ key, label, value: 0, source: 'manual', parent }) })
+        .then(() => { closeModal('modal-add-bucket'); loadSettings(); loadDashboard(); });
+    }
+
+    function addCustomBucket() {
+      const label = document.getElementById('custom-bucket-label').value.trim();
+      if (!label) { alert('请输入名称'); return; }
+      const parent = document.getElementById('add-bucket-parent')?.value || 'total_asset';
+      const value = parseFloat(document.getElementById('custom-bucket-value').value) || 0;
+      const key = parent + '_' + Date.now();
+      KEY_LABELS[key] = label;
+      api('/api/buckets', { method: 'POST', body: JSON.stringify({ key, label, value, source: 'manual', parent }) })
+        .then(() => { closeModal('modal-add-bucket'); loadSettings(); loadDashboard(); });
+    }
+
+    function showInvestForm() {
+      document.getElementById('snap-date').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('snap-amount').value = '';
+      document.getElementById('modal-snapshot').classList.remove('hidden');
+    }
+    async function saveInvestRecord() {
+      const amount = parseFloat(document.getElementById('snap-amount').value) || 0;
+      if (amount <= 0) { alert('请输入金额'); return; }
+      await api('/api/investment/record', {
+        method: 'POST', body: JSON.stringify({
+          date: document.getElementById('snap-date').value,
+          direction: document.getElementById('snap-direction').value,
+          amount: amount
+        })
+      });
+      closeModal('modal-snapshot');
+      loadReport();
+      loadDashboard();
+      loadInvestRecords();
+    }
+    async function loadInvestRecords() {
+      const data = await api('/api/investment/records');
+      const el = document.getElementById('investment-records-list');
+      let html = '<div class="setting-row"><div><div class="label">新增记录</div></div><button class="btn btn-primary btn-sm" onclick="showInvestForm()">+</button></div>';
+      if (data && data.length) {
+        data.forEach(r => {
+          const sign = r.direction === 'profit' ? '+' : '−';
+          const color = r.direction === 'profit' ? '#dc2626' : '#059669';
+          html += '<div class="setting-row"><div><div class="label">' + r.date + '</div><div class="sub">' + (r.direction === 'profit' ? '盈利' : '亏损') + '</div></div><div style="text-align:right"><div style="font-weight:600;color:' + color + '">' + sign + '¥' + fmt(r.amount) + '</div><button class="btn btn-danger btn-sm" onclick="delInvestRecord(\'' + r.id + '\')">删</button></div></div>';
+        });
+      }
+      el.innerHTML = html;
+    }
+    async function delInvestRecord(rid) {
+      if (!confirm('确定删除？将自动恢复市值。')) return;
+      await api('/api/investment/record/' + rid, { method: 'DELETE' });
+      loadReport();
+      loadDashboard();
+      loadInvestRecords();
+    }
+
+    async function clearNotifications(scope) {
+      const msg = scope === 'month' ? '确定删除本月所有通知来源的流水？账单导入的数据不受影响。' : '确定删除全部通知来源的流水？此操作不可恢复。';
+      if (!confirm(msg)) return;
+      let url = '/api/notification/clear';
+      if (scope === 'month') {
+        const now = new Date();
+        url += '?month=' + now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      }
+      const res = await fetch(API + url, { method: 'DELETE' });
+      const data = await res.json();
+      alert('已清除 ' + (data.deleted || 0) + ' 条通知数据');
+      loadTransactions(true);
+      loadDashboard();
+    }
+
+    async function exportCsv() {
+      const data = await api('/api/transactions?limit=10000');
+      const rows = [['时间', '方向', '金额', '渠道', '对方', '商品', '支付方式', '状态', '交易单号', '分类']];
+      for (const t of (data.items || [])) {
+        rows.push([t.occurred_at, t.direction, t.amount, t.channel, t.counterparty, t.item_desc, t.payment_method, t.status, t.external_id, t.flow_type]);
+      }
+      const csv = rows.map(r => r.map(c => '"' + (c || '').replace(/"/g, '""') + '"').join(',')).join('\n');
+      const blob = new Blob(['﻿' + csv], { type: 'text/csv' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'transactions.csv'; a.click();
+    }
+
+    function fmt(n) { return (n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function fmtDate(s) { if (!s) return ''; const d = s.slice(0, 10); const parts = d.split('-'); return parts[1] + '月' + parts[2] + '日'; }
+    function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    function toast(msg) {
+      const el = document.getElementById('app-toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => el.classList.remove('show'), 1500);
+    }
+
+    function scrollToTop() {
+      const root = document.scrollingElement || document.documentElement || document.body;
+      if (root) {
+        root.scrollTop = 0;
+      }
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      window.scrollTo(0, 0);
+      requestAnimationFrame(() => {
+        if (root) root.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        window.scrollTo(0, 0);
+        updateFloatingButtons();
+      });
+    }
+
+    function activePageName() {
+      const page = document.querySelector('.page.active');
+      return page ? page.id.replace('page-', '') : 'dashboard';
+    }
+
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function closeTopModal() {
+      const modal = Array.from(document.querySelectorAll('.modal-overlay:not(.hidden)')).pop();
+      if (!modal) return false;
+      modal.classList.add('hidden');
+      return true;
+    }
+
+    window.handleAndroidBack = function () {
+      if (closeTopModal()) return true;
+      if (window.scrollY > 80) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return true;
+      }
+      if (activePageName() !== 'dashboard') {
+        switchTab('dashboard');
+        return true;
+      }
+      // On dashboard: let Android handle double-press to exit
+      return false;
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === name));
+      document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + name));
+      window.scrollTo(0, 0);
+      if (name === 'dashboard') loadDashboard();
+      if (name === 'transactions') {
+        loadTransactions();
+        refreshPendingSummary();
+      }
+      if (name === 'settings') loadSettings();
+      if (name === 'report') loadInvestRecords();
+      updateFloatingButtons();
+    }
+
+    function updateFloatingButtons() {
+      const backTop = document.getElementById('back-to-top');
+      const bulkBtn = document.getElementById('bulk-confirm-btn');
+      const scrollY = Math.max(window.scrollY || 0, document.documentElement.scrollTop || 0, document.body.scrollTop || 0);
+      const showTop = scrollY > 120;
+      if (backTop) backTop.classList.toggle('visible', showTop);
+      const showBulk = activePageName() === 'transactions' && state.pendingCount > 0;
+      if (bulkBtn) bulkBtn.classList.toggle('visible', showBulk);
+    }
+
+    function initMonthSelects() {
+      const now = new Date();
+      for (let i = 0; i < 6; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const val = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+        const label = d.getFullYear() + '年' + String(d.getMonth() + 1).padStart(2, '0') + '月';
+        ['filter-month', 'report-month'].forEach(id => {
+          const sel = document.getElementById(id);
+          if (sel) { const opt = document.createElement('option'); opt.value = val; opt.textContent = label; sel.appendChild(opt); }
+        });
+      }
+      document.getElementById('report-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      document.getElementById('filter-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => switchTab(tab.dataset.page));
+    });
+
+    window.addEventListener('scroll', () => {
+      updateFloatingButtons();
+    });
+    document.addEventListener('scroll', () => {
+      updateFloatingButtons();
+    }, true);
+
+    initMonthSelects();
+    loadDashboard();
+    loadSettings();
+    loadReport();
+    loadTransactions();
+    loadInvestRecords();
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) updateFloatingButtons();
+    });
+
+    // Infinite scroll (mobile): auto-load more when scrolling near bottom
+    if (isMobile) {
+      var scrollLoading = false;
+      var lastScrollY = 0;
+      window.addEventListener('scroll', function () {
+        if (scrollLoading) return;
+        if (activePageName() !== 'transactions') return;
+        var sentinel = document.getElementById('txn-load-more');
+        if (!sentinel || sentinel.style.display === 'none') return;
+        var rect = sentinel.getBoundingClientRect();
+        if (rect.top < window.innerHeight + 300) {
+          scrollLoading = true;
+          loadMore().then(function () {
+            scrollLoading = false;
+          }).catch(function () {
+            scrollLoading = false;
+          });
+        }
+      }, { passive: true });
+    }
+  </script>
+</body>
+
+</html>
