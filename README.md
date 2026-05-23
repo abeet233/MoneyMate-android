@@ -47,14 +47,8 @@
 - 运行时页面在 `app/src/main/python/index.html`
 - 构建镜像目录在 `app/build/python/sources/debug`
 
-## 常见问题
-
-### 为什么要重新 Run 才能看到改动？
-因为页面和 Python 服务都被打包进 APK，必须重新构建安装后才会生效。
-
-### 为什么某些手机上通知不稳定？
-部分厂商会限制后台和通知监听服务，建议关闭电池优化并允许通知使用权。
-
 ## 截图
 
-后续可补充。
+<img width="1080" height="2153" alt="d84194cc0a4b8b5ded81dbacbedb3ff8" src="https://github.com/user-attachments/assets/2e317e23-b6fe-4799-a486-6a93c559e9b6" />
+<img width="1080" height="2295" alt="18ec7c2def4c94cabde396684d4f5eb5" src="https://github.com/user-attachments/assets/28cb25c6-445c-4951-b584-5f490f335394" />
+
