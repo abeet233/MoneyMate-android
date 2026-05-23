@@ -48,7 +48,7 @@
 - 构建镜像目录在 `app/build/python/sources/debug`
 
 ## 截图
+<img width="1080" height="2295" alt="18ec7c2def4c94cabde396684d4f5eb5" src="https://github.com/user-attachments/assets/544df3ac-4428-4132-91ed-e281b19592a2" />
+<img width="1080" height="2153" alt="d84194cc0a4b8b5ded81dbacbedb3ff8" src="https://github.com/user-attachments/assets/53de2976-c373-481d-9688-d745c6b4cf57" />
 
-<img width="108" height="1000" alt="d84194cc0a4b8b5ded81dbacbedb3ff8" src="https://github.com/user-attachments/assets/2e317e23-b6fe-4799-a486-6a93c559e9b6" />
-<img width="108" height="1000" alt="18ec7c2def4c94cabde396684d4f5eb5" src="https://github.com/user-attachments/assets/28cb25c6-445c-4951-b584-5f490f335394" />
 
